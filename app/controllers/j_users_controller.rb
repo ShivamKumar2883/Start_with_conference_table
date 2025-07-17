@@ -4,13 +4,13 @@ class JUsersController < ApplicationController
     def index
         render json: JUser.all()
     end
-    
+
     def show
         render json: JUser.find(params[:id])
         if user
       render json: user
     else
-      render json: { error: "Not found" }, status: 404
+      render json: { error: "Not found" }
     end
     end
 

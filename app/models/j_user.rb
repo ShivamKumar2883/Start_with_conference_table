@@ -1,0 +1,2 @@
+class JUser < ApplicationRecord
+end

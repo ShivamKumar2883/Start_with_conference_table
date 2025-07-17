@@ -42,13 +42,6 @@ class JUsersController < ApplicationController
   end
   end
 
-# Sample Data:
-# {
-#   "email": "updated@example.com",
-#   "password": "newpassword123",
-#   "updateAt": "3pm"
-# }
-
     def destroy
     user = JUser.find(params[:id])
     if user

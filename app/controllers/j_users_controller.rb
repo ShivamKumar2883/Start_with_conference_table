@@ -6,7 +6,7 @@ class JUsersController < ApplicationController
     end
 
     def show
-        render json: JUser.find(params[:id])
+        user = JUser.find_by(id: params[:id])
         if user
       render json: user
     else
@@ -41,6 +41,13 @@ class JUsersController < ApplicationController
     render json: { error: "User not found" }
   end
   end
+
+# Sample Data:
+# {
+#   "email": "updated@example.com",
+#   "password": "newpassword123",
+#   "updateAt": "3pm"
+# }
 
     def destroy
     user = JUser.find(params[:id])

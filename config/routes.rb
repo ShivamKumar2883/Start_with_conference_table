@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
   resources :j_users
-  root 'jusers#index'
+  root 'j_users#index'
 end

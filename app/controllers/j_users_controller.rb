@@ -2,53 +2,54 @@ class JUsersController < ApplicationController
     skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
 
     def index
-        render json: JUser.all()
+      users = JUser.all()
+      emails = users.map{ |user| user.email }
+      render json: emails
     end
 
     def show
+      begin
         user = JUser.find_by(id: params[:id])
-        if user
       render json: user
-    else
-      render json: { error: "Not found" }
+        rescue Active::RecordNotFound
+      render json: { error: "User with ID #{params[:id]} not found." }
     end
     end
 
   def create
-    user = JUser.create(
-      email: params[:email],
-      password: params[:password],
-      createdAt: params[:createdAt],
-      updateAt: params[:updateAt]
-    )
-    if user.save
+    begin
+      user = UserService.create_user(params[:email], params[:password])
       render json: user
-    else
-      render json: { error: "Check the Input formate" }
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { 
+        error: "Validation failed",
+        details: e.record.errors.full_messages 
+    }
     end
   end
 
   def update
-    user = JUser.find(params[:id])
-    if user
-    user.update(
-      email: params[:email],
-      password: params[:password] ,
-      updateAt: params[:updateAt] 
-    )
+    begin
+      user = UserService.update_user(params[:id], params[:email], params[:password])
     render json: user
-      else
-    render json: { error: "User not found" }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User with ID #{params[:id]} not found" }
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { 
+      error: "Validation failed",
+      details: e.record.errors.full_messages 
+    }
   end
-  end
+end
 
     def destroy
-    user = JUser.find(params[:id])
-    if user
-    user.destroy
-    render json: JUser.all()
-    else 
-        render json: {error: "user not found"}
+      begin
+        user = JUser.find(params[:id])
+        user.destroy!
+        render json: { message: "User deleted successfully" }
+
+      rescue ActiveRecord::RecordNotFound
+          render json: {error: "User with ID #{params[:id]} not found"}
     end
 end
 end

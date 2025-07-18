@@ -18,7 +18,7 @@ class JUsersController < ApplicationController
 
   def create
     begin
-      user = UserService.create_user(params[:email], params[:password])
+      user = UserService.create_user(params[:j_user][:email], params[:j_user][:password])
       render json: user
     rescue ActiveRecord::RecordInvalid => e
       render json: { 
@@ -30,7 +30,7 @@ class JUsersController < ApplicationController
 
   def update
     begin
-      user = UserService.update_user(params[:id], params[:email], params[:password])
+      user = UserService.update_user(params[:id], params[:j_user][:email], params[:j_user][:password])
     render json: user
   rescue ActiveRecord::RecordNotFound
     render json: { error: "User with ID #{params[:id]} not found" }

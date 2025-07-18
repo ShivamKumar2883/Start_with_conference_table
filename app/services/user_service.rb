@@ -1,4 +1,4 @@
-module Services
+
 class UserService
   def self.create_user(email, password)
     user = JUser.new(
@@ -20,5 +20,4 @@ class UserService
     )
     user
   end
-end
 end

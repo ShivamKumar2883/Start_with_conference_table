@@ -15,8 +15,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_045411) do
     t.string "email"
     t.string "password"
     t.datetime "created_at", precision: nil
-t.datetime "updated_at", precision: nil
-
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

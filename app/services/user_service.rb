@@ -3,9 +3,7 @@ class UserService
   def self.create_user(email, password)
     user = JUser.new(
       email: email,
-      password: password,
-      createdAt: Time.now,
-      updateAt: Time.now
+      password: password
     )
     user.save!
     user
@@ -16,7 +14,7 @@ class UserService
     user.update!(
       email: email,
       password: password,
-      updateAt: Time.now
+      updated_at: Time.now
     )
     user
   end

@@ -10,13 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_17_081243) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_21_045411) do
   create_table "j_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email"
     t.string "password"
-    t.string "createdAt"
-    t.string "updateAt"
+    t.datetime "created_at", precision: nil
+t.datetime "updated_at", precision: nil
+
+  end
+
+  create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "designation"
+    t.string "address"
+    t.string "phone_number"
+    t.string "profile_pic"
+    t.string "pincode"
+    t.bigint "j_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["j_user_id"], name: "index_profiles_on_j_user_id"
   end
+
+  add_foreign_key "profiles", "j_users"
 end

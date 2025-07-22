@@ -1,12 +1,12 @@
 class ProfileService
-  
 
-
-    def self.create_profile(j_user_id, profile_params)
+  def self.create_profile(j_user_id, profile_params)
 
     if Profile.exists?(j_user_id: j_user_id)
       raise ActiveRecord::RecordNotUnique, "User already has a profile"
     end
+
+    #Sir i think iss profile variable ko class variable bana ke user controller mei v use karna better hoga!
 
     profile = Profile.new(
       j_user_id: j_user_id,

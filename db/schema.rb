@@ -10,12 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_045411) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_22_080143) do
   create_table "j_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email"
     t.string "password"
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
+    t.string "api_token"
+    t.index ["api_token"], name: "index_j_users_on_api_token", unique: true
   end
 
   create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

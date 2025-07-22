@@ -1,5 +1,9 @@
 class JUsersController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
+
+    include ApiAuthenticable
+    # skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
+
+    # skip_before_action :authenticate_user!, only: [:index, :show]
 
     def index
       users = JUser.all()
@@ -69,6 +73,10 @@ class JUsersController < ApplicationController
 
   def update
     begin
+        if current_user.id != params[:id].to_i
+        render json: { error: "Unauthorized" }, status: :unauthorized
+        return
+        end
       user = UserService.update_user(params[:id], params[:j_user][:email], params[:j_user][:password])
     render json: user
   rescue ActiveRecord::RecordNotFound
@@ -83,6 +91,10 @@ end
 
     def destroy
       begin
+        if current_user.id != params[:id].to_i
+        render json: { error: "Unauthorized" }, status: :unauthorized
+        return
+        end
         user = JUser.find(params[:id])
         user.destroy!
         render json: { message: "User deleted successfully" }

@@ -1,24 +1,25 @@
-# README
+#  error resolved: 
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+user_service file was also saving the data before profile validation.
 
-Things you may want to cover:
 
-* Ruby version
+class UserService
+  def self.create_user(email, password)
+    user = JUser.new(
+      email: email,
+      password: password
+    )
+    # user.save! Sir yah error kar raha tha!!
+    user
+  end
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+  def self.update_user(user_id, email, password)
+    user = JUser.find(user_id)
+    user.update!(
+      email: email,
+      password: password,
+      updated_at: Time.now
+    )
+    user
+  end
+end

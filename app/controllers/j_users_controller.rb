@@ -21,27 +21,26 @@ class JUsersController < ApplicationController
     begin
       user = UserService.create_user(params[:j_user][:email], params[:j_user][:password])
 
-      profile = ProfileService.create_profile(
-        user.id,
-      {
+      profile = Profile.new(
+
+      j_user: user,
         name: params[:j_user][:name],
         designation: params[:j_user][:designation],
         address: params[:j_user][:address],
         phone_number: params[:j_user][:phone_number],
         pincode: params[:j_user][:pincode],
         profile_pic: params[:j_user][:profile_pic]
-      }
       )
 
       user_valid = user.valid?
       profile_valid = profile.valid?
       
       if user_valid && profile_valid 
-      user.save!
-      profile.save!
+       user.save!
+        profile.save!
 
-      render json: { user: user, profile: profile }, status: :created
-
+        render json: { user: user, profile: profile }, status: :created
+        return
       else
 
     raise ActiveRecord::Rollback, "Validation Failed."

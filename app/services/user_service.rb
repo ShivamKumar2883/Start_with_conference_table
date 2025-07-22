@@ -5,7 +5,7 @@ class UserService
       email: email,
       password: password
     )
-    user.save!
+    # user.save! Sir yah error kar raha tha!!
     user
   end
 

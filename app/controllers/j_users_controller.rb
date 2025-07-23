@@ -1,9 +1,6 @@
 class JUsersController < ApplicationController
 
-    include ApiAuthenticable
-    # skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
-
-    # skip_before_action :authenticate_user!, only: [:index, :show]
+    before_action :authenticate_user, except: [:create]
 
     def index
       users = JUser.all()
@@ -43,6 +40,19 @@ class JUsersController < ApplicationController
        user.save!
         profile.save!
 
+        access_token = JWT.encode(
+          { user_id: user.id, exp: 15.minutes.from_now.to_i },
+          ApiAuthenticable::ACCESS_SECRET
+        )
+        refresh_token = JWT.encode(
+          { user_id: user.id, exp: 7.days.from_now.to_i },
+          ApiAuthenticable::REFRESH_SECRET
+        )
+
+        response.headers['Access-Token'] = access_token
+        response.headers['Refresh-Token'] = refresh_token
+
+
         render json: { user: user, profile: profile }, status: :created
         return
       else
@@ -77,6 +87,7 @@ class JUsersController < ApplicationController
         render json: { error: "Unauthorized" }, status: :unauthorized
         return
         end
+
       user = UserService.update_user(params[:id], params[:j_user][:email], params[:j_user][:password])
     render json: user
   rescue ActiveRecord::RecordNotFound

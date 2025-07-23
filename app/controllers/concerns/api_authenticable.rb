@@ -7,12 +7,19 @@ module ApiAuthenticable
   def authenticate_user
     return if action_name == 'create' 
 
-    access_token = request.headers['Access-Token']
-    refresh_token = request.headers['Refresh-Token']
+      # Handle different header naming conventions
+  access_token = request.headers['HTTP_ACCESS_TOKEN'] || 
+                 request.headers['Access-Token'] ||
+                 request.headers['access-token']
+
+  # Same for refresh token
+  refresh_token = request.headers['HTTP_REFRESH_TOKEN'] || 
+                  request.headers['Refresh-Token'] ||
+                  request.headers['refresh-token']
 
     @current_user = verify_access_token(access_token)
 
-    @current_user ||= try_refresh_flow(refresh_token) if refresh_token
+    @current_user ||= try_refresh_flow(refresh_token) if refresh_token.present?
 
     render_unauthorized unless @current_user
   end
@@ -55,4 +62,8 @@ module ApiAuthenticable
   def render_unauthorized
     render json: { error: 'Invalid or expired tokens' }, status: :unauthorized
   end
+
+  def current_user
+  @current_user
+end
 end

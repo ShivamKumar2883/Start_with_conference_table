@@ -5,12 +5,7 @@ class ProfilesController < ApplicationController
 
   def show
     begin
-
-      if current_user.id != params[:id].to_i
-        render json: { error: "Unauthorized" }, status: :unauthorized
-        return
-        end
-        
+      
       profile = ProfileService.get_profile(params[:j_user_id])
       render json: profile
     rescue ActiveRecord::RecordNotFound 
@@ -20,11 +15,6 @@ class ProfilesController < ApplicationController
 
   def update
     begin
-
-      if current_user.id != params[:id].to_i
-        render json: { error: "Unauthorized" }, status: :unauthorized
-        return
-        end
 
       profile = ProfileService.update_profile(params[:j_user_id], params[:profile])
       render json: profile

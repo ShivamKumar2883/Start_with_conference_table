@@ -83,10 +83,6 @@ class JUsersController < ApplicationController
 
   def update
     begin
-        if current_user.id != params[:id].to_i
-        render json: { error: "Unauthorized" }, status: :unauthorized
-        return
-        end
 
       user = UserService.update_user(params[:id], params[:j_user][:email], params[:j_user][:password])
     render json: user
@@ -102,10 +98,7 @@ end
 
     def destroy
       begin
-        if current_user.id != params[:id].to_i
-        render json: { error: "Unauthorized" }, status: :unauthorized
-        return
-        end
+
         user = JUser.find(params[:id])
         user.destroy!
         render json: { message: "User deleted successfully" }

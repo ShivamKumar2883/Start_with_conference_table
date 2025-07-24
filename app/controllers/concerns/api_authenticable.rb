@@ -28,14 +28,14 @@ module ApiAuthenticable
 
   def verify_access_token(token)
     payload = JWT.decode(token, ACCESS_SECRET).first
-    User.find_by(id: payload['user_id'], active: true)
+    JUser.find_by(id: payload['user_id'], active: true)
   rescue JWT::DecodeError, JWT::ExpiredSignature
     nil
   end
 
   def try_refresh_flow(token)
     payload = JWT.decode(token, REFRESH_SECRET).first
-    user = User.find_by(id: payload['user_id'], active: true)
+    user = JUser.find_by(id: payload['user_id'], active: true)
     return unless user && user.refresh_token == token
 
     generate_new_tokens(user)

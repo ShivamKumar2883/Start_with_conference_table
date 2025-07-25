@@ -1,4 +1,4 @@
 class ProfilePicture < ApplicationRecord
   belongs_to :profile, optional: true # This makes the association optional
-  validates :image_url, presence: true
+  validates :image_url
 end

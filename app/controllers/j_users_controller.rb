@@ -30,7 +30,7 @@ class JUsersController < ApplicationController
         address: params[:j_user][:address],
         phone_number: params[:j_user][:phone_number],
         pincode: params[:j_user][:pincode],
-        profile_pic: params[:j_user][:profile_pic]
+        profile_pic: nil
       )
 
       user_valid = user.valid?
@@ -39,6 +39,14 @@ class JUsersController < ApplicationController
       if user_valid && profile_valid 
        user.save!
         profile.save!
+
+        if params[:j_user][:profile_pic].present?
+          profile.create_profile_picture!(
+            image_url: params[:j_user][:profile_pic],
+            user_name: params[:j_user][:name]
+          )
+        end
+
 
         access_token = JWT.encode(
           { user_id: user.id, exp: 15.minutes.from_now.to_i },
@@ -53,7 +61,8 @@ class JUsersController < ApplicationController
         response.headers['Refresh-Token'] = refresh_token
 
 
-        render json: { user: user, profile: profile }, status: :created
+        render json: { user: user, profile: profile, profile_pic: profile.profile_picture&.image_url  #profile table ke throught profile_pic table mei jayega fir image_url wale row mei save hoga as optional save!!
+        }, status: :created
         return
       else
 

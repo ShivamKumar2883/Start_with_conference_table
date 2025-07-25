@@ -1,69 +1,122 @@
 require 'jwt'
+require 'securerandom'
 
 module ApiAuthenticable
-  ACCESS_SECRET = Rails.application.credentials.jwt_access_secret
-  REFRESH_SECRET = Rails.application.credentials.jwt_refresh_secret
+  ACCESS_SECRET = ENV['JWT_ACCESS_SECRET'] || SecureRandom.hex(32)
+  REFRESH_SECRET = ENV['JWT_REFRESH_SECRET'] || SecureRandom.hex(32)
 
   def authenticate_user
-    return if action_name == 'create' 
 
-      # Handle different header naming conventions
-  access_token = request.headers['HTTP_ACCESS_TOKEN'] || 
-                 request.headers['Access-Token'] ||
-                 request.headers['access-token']
+    access_token = request.headers['HTTP_ACCESS_TOKEN'] || 
+                  request.headers['Access-Token'] || 
+                  request.headers['access-token']
 
-  # Same for refresh token
-  refresh_token = request.headers['HTTP_REFRESH_TOKEN'] || 
-                  request.headers['Refresh-Token'] ||
-                  request.headers['refresh-token']
+    refresh_token = request.headers['HTTP_REFRESH_TOKEN'] || 
+                   request.headers['Refresh-Token'] || 
+                   request.headers['refresh-token']
 
-    @current_user = verify_access_token(access_token)
+    if access_token.to_s.strip.empty? && refresh_token.to_s.strip.empty?
+      return render_authentication_error(
+        code: 'missing_tokens',
+        message: 'No authentication tokens provided',
+        status: 401
+      )
+    end
 
-    @current_user ||= try_refresh_flow(refresh_token) if refresh_token.present?
+    if access_token.present?
+      begin
+        decoded_payload = JWT.decode(access_token, ACCESS_SECRET, true, { algorithm: 'HS256' }).first
+        @current_user = JUser.find_by(id: decoded_payload['user_id'])
+        
+        unless @current_user
+          return render_authentication_error(
+            code: 'user_not_found',
+            message: 'User associated with token not found',
+            status: 404
+          )
+        end
 
-    render_unauthorized unless @current_user
+        return true
+      rescue JWT::ExpiredSignature
+
+      rescue JWT::DecodeError, JWT::VerificationError
+        return render_authentication_error(
+          code: 'invalid_access_token',
+          message: 'Invalid access token',
+          status: 401
+        )
+      end
+    end
+
+    if refresh_token.present?
+      begin
+        decoded_payload = JWT.decode(refresh_token, REFRESH_SECRET, true, { algorithm: 'HS256' }).first
+        user = JUser.find_by(id: decoded_payload['user_id'])
+        
+        unless user
+          return render_authentication_error(
+            code: 'user_not_found',
+            message: 'User associated with token not found',
+            status: 404
+          )
+        end
+
+        unless user.refresh_token == refresh_token
+          return render_authentication_error(
+            code: 'token_mismatch',
+            message: 'Refresh token does not match stored token',
+            status: 401
+          )
+        end
+
+        new_access_token = generate_token(user.id, ACCESS_SECRET, 15.minutes)
+        new_refresh_token = generate_token(user.id, REFRESH_SECRET, 7.days)
+
+        user.update!(refresh_token: new_refresh_token)
+        response.headers['New-Access-Token'] = new_access_token
+        response.headers['New-Refresh-Token'] = new_refresh_token
+
+        @current_user = user
+        return true
+      rescue JWT::ExpiredSignature
+        return render_authentication_error(
+          code: 'expired_refresh_token',
+          message: 'Refresh token has expired',
+          status: 401
+        )
+      rescue JWT::DecodeError, JWT::VerificationError
+        return render_authentication_error(
+          code: 'invalid_refresh_token',
+          message: 'Invalid refresh token',
+          status: 401
+        )
+      end
+    end
+
+    render_authentication_error(
+      code: 'unauthorized',
+      message: 'Authentication failed',
+      status: 401
+    )
   end
 
   private
 
-  def verify_access_token(token)
-    payload = JWT.decode(token, ACCESS_SECRET).first
-    JUser.find_by(id: payload['user_id'], active: true)
-  rescue JWT::DecodeError, JWT::ExpiredSignature
-    nil
+  def generate_token(user_id, secret, expires_in)
+    payload = {
+      user_id: user_id,
+      exp: Time.now.to_i + expires_in.to_i
+    }
+    JWT.encode(payload, secret, 'HS256')
   end
 
-  def try_refresh_flow(token)
-    payload = JWT.decode(token, REFRESH_SECRET).first
-    user = JUser.find_by(id: payload['user_id'], active: true)
-    return unless user && user.refresh_token == token
-
-    generate_new_tokens(user)
-    user
-  rescue JWT::DecodeError
-    nil
+  def render_authentication_error(code:, message:, status:)
+    render json: {
+      error: {
+        code: code,
+        message: message,
+        timestamp: Time.now.iso8601
+      }
+    }, status: status
   end
-
-  def generate_new_tokens(user)
-    new_access = JWT.encode(
-      { user_id: user.id, exp: 15.minutes.from_now.to_i },
-      ACCESS_SECRET
-    )
-    new_refresh = JWT.encode(
-      { user_id: user.id, exp: 7.days.from_now.to_i },
-      REFRESH_SECRET
-    )
-
-    user.update!(refresh_token: new_refresh)
-    response.headers['New-Access-Token'] = new_access
-    response.headers['New-Refresh-Token'] = new_refresh
-  end
-
-  def render_unauthorized
-    render json: { error: 'Invalid or expired tokens' }, status: :unauthorized
-  end
-
-  def current_user
-  @current_user
-end
 end

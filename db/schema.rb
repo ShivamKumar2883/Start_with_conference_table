@@ -10,12 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_22_080143) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_25_051140) do
   create_table "j_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email"
     t.string "password"
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
+  end
+
+  create_table "profile_pictures", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "profile_id", null: false
+    t.string "image_url"
+    t.string "user_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id"], name: "index_profile_pictures_on_profile_id"
   end
 
   create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -31,5 +40,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_22_080143) do
     t.index ["j_user_id"], name: "index_profiles_on_j_user_id"
   end
 
+  add_foreign_key "profile_pictures", "profiles"
   add_foreign_key "profiles", "j_users"
 end

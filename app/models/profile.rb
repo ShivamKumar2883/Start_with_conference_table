@@ -1,7 +1,7 @@
 class Profile < ApplicationRecord
   belongs_to :j_user
   has_one :profile_picture, dependent: :destroy  # Add this line
-
+  has_many :posts, dependent: :destroy
 
   validates :j_user_id, uniqueness: { on: [:create, :update] }
   validates :name, :designation, :address, presence: true

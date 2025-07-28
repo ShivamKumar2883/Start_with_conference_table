@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resources :j_users do
-    resource :profile
+    resources :profiles do
+      resources :posts
+    end
   end
   root 'j_users#index'
 end

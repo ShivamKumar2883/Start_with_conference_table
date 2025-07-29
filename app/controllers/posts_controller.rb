@@ -1,10 +1,10 @@
 class PostsController < ApplicationController
 
-    before_action :authenticate_user
-    # belongs_to :profile
+    before_action :authenticate_user, except: [:show_by_id, :show, :index]
+    # belongs_to :user, class_name: 'JUser', foreign_key: 'user_id'
     #this association is done in model to prevent extra data creation as one to many ass..
 
-    #to show all posts as a feed of social media
+    #to show all posts as a feed of social media.
     def index
         begin 
             posts = Post.all
@@ -14,27 +14,38 @@ class PostsController < ApplicationController
         end
     end
 
-    #to show posts as per each user
+    # to show by post id in case someone share the post to you and you can see the direct post, 
+    # no access token or user check its like media share and 
+    # GET http://localhost:3000/posts/1 and 
+    # GET http://localhost:3000/j_users/5/profiles/5/posts/1
+    def show_by_id
+      post = Post.find(params[:id])
+      render json: post
+    rescue ActiveRecord::RecordNotFound
+      render json: {error: "Post not found"}
+    end
+
+    # to show posts as per users profile feed ...if you click on someone's profile 
+    # it should show all posts related to that person what he posted.
+     # GET http://localhost:3000/j_users/1/profiles/1/posts
+    # http://localhost:3000/j_users/5/profiles/5/posts/
     def show
-        begin
-            posts = Profile.find(params[:profile_id]).posts
-            render json: posts
-        rescue ActiveRecord::RecordNotFound
-            render json:{
-                error: "Profile not found"
-            }
-        end
+      user = JUser.find(params[:profile_id]) 
+      posts = user.posts.order(created_at: :desc)
+      render json: posts
+    rescue ActiveRecord::RecordNotFound
+      render json: {error: "Profile not found"}
     end
 
     def create
         ActiveRecord::Base.transaction do
             begin
-                profile = Profile.find(params[:profile_id])
-                post = profile.posts.build(
-                    title: params[:post][:title],
-                    content: params[:post][:content],
-                    posted_by: profile.j_user.name
-                )
+                user = JUser.find(params[:profile_id]) 
+        post = user.posts.build(
+          title: params[:post][:title],
+          content: params[:post][:content],
+          posted_by: user.profile.name #user name profile table se aa raha h!!
+        )
                 if post.save
                     render json: post
                 else
@@ -44,18 +55,27 @@ class PostsController < ApplicationController
                     raise ActiveRecord::Rollback
 
                 end
-                rescue => e
-                    render json:{
-                        error: "Post creation failed"
-                    }
-                end
-            end
-        end
+                rescue ActiveRecord::RecordNotFound
+      render json: { error: "Profile not found" }
+    rescue NoMethodError
+      render json: { 
+        error: "Invalid request format",
+        details: "Expected format: { post: { title: '...', content: '...' } }"
+      }
+    rescue => e
+      render json: { 
+        error: "Post creation failed",
+        details: e.message 
+      }
+    end
+  end
+end
 
 
     def update
     begin
-      post = Profile.find(params[:profile_id]).posts.find(params[:id])
+      user = JUser.find(params[:j_user_id])
+      post = user.posts.find(params[:id])
       
       if post.update(
         title: params[:post][:title],
@@ -76,7 +96,8 @@ class PostsController < ApplicationController
 
   def destroy
     begin
-      post = Profile.find(params[:profile_id]).posts.find(params[:id])
+      user = JUser.find(params[:j_user_id])
+      post = user.posts.find(params[:id])
       post.destroy!
       render json: { message: "Post deleted successfully" }
     rescue ActiveRecord::RecordNotFound

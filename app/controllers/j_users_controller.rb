@@ -1,6 +1,6 @@
 class JUsersController < ApplicationController
 
-    before_action :authenticate_user, except: [:create]
+    before_action :authenticate_user, except: [:create, :index]
 
     def index
       users = JUser.all()
@@ -30,7 +30,8 @@ class JUsersController < ApplicationController
         address: params[:j_user][:address],
         phone_number: params[:j_user][:phone_number],
         pincode: params[:j_user][:pincode],
-        profile_pic: nil
+        # profile_pic: nil
+        profile_pic: params[:j_user][:profile_pic]
       )
 
       user_valid = user.valid?

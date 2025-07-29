@@ -21,11 +21,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_050642) do
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
     t.string "content", null: false
-    t.bigint "profile_id", null: false
+    t.bigint "j_user_id", null: false
     t.string "posted_by", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["profile_id"], name: "index_posts_on_profile_id"
+    t.index ["j_user_id"], name: "index_posts_on_j_user_id"
   end
 
   create_table "profile_pictures", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -50,7 +50,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_050642) do
     t.index ["j_user_id"], name: "index_profiles_on_j_user_id"
   end
 
-  add_foreign_key "posts", "profiles"
+  add_foreign_key "posts", "j_users"
   add_foreign_key "profile_pictures", "profiles"
   add_foreign_key "profiles", "j_users"
 end

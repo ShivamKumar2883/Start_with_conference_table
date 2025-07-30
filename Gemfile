@@ -61,3 +61,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "rabl", "~> 0.17.0"
+
+gem "oj", "~> 3.16"

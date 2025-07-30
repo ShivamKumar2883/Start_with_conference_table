@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
   
-  get 'posts/:id', to: 'posts#show_by_id'
   
   resources :j_users do
     resources :profiles do
-      resources :posts
-    end
-  end
-
+      resources :posts do 
+        collection do
+          get :feed
+     end #this one for colllection
+  end #this one for post
+end #this one for profile
+end #this one for j_users
+ 
+    get 'posts/:id', to: 'posts#show' #for direct /posts/:id
     root 'j_users#index'
 end

@@ -1,8 +1,7 @@
-object @profile
+object @post
 
-attributes :id, :name, :designation, :address, :phone_number, :pincode
+attributes :id, :title, :content, :posted_by, :created_at, :updated_at
 
-node(:profile_pic) { |p| p.profile_picture&.image_url }
-node(:user_id) { |p| p.j_user_id }
-
-node(:user_email) { |p| p.j_user.email }
+child :j_user do
+  attributes :email
+end

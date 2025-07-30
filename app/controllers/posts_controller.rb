@@ -35,8 +35,8 @@ class PostsController < ApplicationController
     #sir yah all posts under searched user function in iske help se collection v try kiye h route file mei.
     def feed
         begin
-          user = JUser.find(params[:user_id])
-          posts = user.posts.order(created_at: :desc)
+          @user = JUser.find(params[:user_id])
+          @posts = @user.posts.order(created_at: :desc)
           # render json: posts
           respond_to :json
         rescue ActiveRecord::RecordNotFound
@@ -50,12 +50,12 @@ class PostsController < ApplicationController
     def create
         ActiveRecord::Base.transaction do
             begin
-        post = current_user.posts.build(
+        @post = current_user.posts.build(
           title: params[:post][:title],
           content: params[:post][:content],
           posted_by: current_user.profile.name
         )
-                if post.save
+                if @post.save
                     render json: post
                 else
                     render json:{

@@ -66,7 +66,7 @@ class JUsersController < ApplicationController
         # }, status: :created
         # return
 
-        render 'j_users/show'
+        render 'show'
         # respond_to :json
       else
 

@@ -12,5 +12,6 @@ end #this one for profile
 end #this one for j_users
  
     get 'posts/:id', to: 'posts#show' #for direct /posts/:id
+    get 'trigger_demo_email', to: 'api/jobs#send_demo_email'
     root 'j_users#index'
 end

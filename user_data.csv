@@ -1,0 +1,6 @@
+email,password,first_name,last_name,designation,address,phone_number,pincode,profile_pic,image_url,user_name
+rahul.sharma@example.com,rahul1234,Rahul,Sharma,Software Engineer,"45 MG Road, Bangalore",9876543210,560001,rahul.jpg,rahul_profile.jpg,rahulsharma
+priya.patel@example.com,priya2023,Priya,Patel,Marketing Manager,"12 Hill View, Mumbai",8765432109,400001,priya.jpg,priya_profile.jpg,priyapatel
+arjun.singh@example.com,arjun#456,Arjun,Singh,Data Scientist,"7 Green Park, Delhi",7654321098,110001,arjun.jpg,arjun_profile.jpg,arjunsingh
+ananya.gupta@example.com,ananya$789,Ananya,Gupta,UX Designer,"23 Lake Side, Hyderabad",6543210987,500001,ananya.jpg,ananya_profile.jpg,ananyagupta
+vikram.iyer@example.com,vikram*101,Vikram,Iyer,Product Owner,"5th Cross, Chennai",9432109876,600001,vikram.jpg,vikram_profile.jpg,vikramiyer

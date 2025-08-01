@@ -1,25 +1,7 @@
-#  error resolved: 
+Importing data from CSV file to peform rack task fro creating user and profile.
 
-user_service file was also saving the data before profile validation.
+main files: 
 
+1. CSV file: At root as user_data.csv
 
-class UserService
-  def self.create_user(email, password)
-    user = JUser.new(
-      email: email,
-      password: password
-    )
-    # user.save! Sir yah error kar raha tha!!
-    user
-  end
-
-  def self.update_user(user_id, email, password)
-    user = JUser.find(user_id)
-    user.update!(
-      email: email,
-      password: password,
-      updated_at: Time.now
-    )
-    user
-  end
-end
+2. Rake file: in lib/tasks as import_users.rake

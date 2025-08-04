@@ -1,0 +1,2 @@
+class Enquire < ApplicationRecord
+end

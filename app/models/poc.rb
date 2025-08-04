@@ -1,0 +1,2 @@
+class Poc < ApplicationRecord
+end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_04_084723) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_04_091218) do
   create_table "conferences", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
     t.text "description", null: false
@@ -51,6 +51,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_084723) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "enquires", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "in_people", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "address", null: false
     t.string "city", null: false
@@ -68,6 +74,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_084723) do
     t.string "password"
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
+  end
+
+  create_table "pocs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "phone", null: false
+    t.bigint "conference_id", null: false
+    t.bigint "enquires_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conference_id"], name: "index_pocs_on_conference_id"
+    t.index ["enquires_id"], name: "index_pocs_on_enquires_id"
   end
 
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -110,6 +128,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_084723) do
   add_foreign_key "in_people", "conferences"
   add_foreign_key "in_people", "districts"
   add_foreign_key "in_people", "states"
+  add_foreign_key "pocs", "conferences"
+  add_foreign_key "pocs", "enquires", column: "enquires_id"
   add_foreign_key "posts", "j_users"
   add_foreign_key "profile_pictures", "profiles"
   add_foreign_key "profiles", "j_users"

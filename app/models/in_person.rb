@@ -1,0 +1,2 @@
+class InPerson < ApplicationRecord
+end

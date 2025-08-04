@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_04_070742) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_04_084723) do
   create_table "conferences", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
     t.text "description", null: false
@@ -43,6 +43,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_070742) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "districts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "in_people", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "address", null: false
+    t.string "city", null: false
+    t.string "pincode", null: false
+    t.bigint "conference_id", null: false
+    t.bigint "state_id", null: false
+    t.bigint "district_id", null: false
+    t.index ["conference_id"], name: "index_in_people_on_conference_id"
+    t.index ["district_id"], name: "index_in_people_on_district_id"
+    t.index ["state_id"], name: "index_in_people_on_state_id"
   end
 
   create_table "j_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -84,7 +102,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_070742) do
     t.index ["j_user_id"], name: "index_profiles_on_j_user_id"
   end
 
+  create_table "states", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
   add_foreign_key "conferences", "j_users"
+  add_foreign_key "in_people", "conferences"
+  add_foreign_key "in_people", "districts"
+  add_foreign_key "in_people", "states"
   add_foreign_key "posts", "j_users"
   add_foreign_key "profile_pictures", "profiles"
   add_foreign_key "profiles", "j_users"

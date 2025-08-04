@@ -10,3 +10,5 @@ end
 
 node(:access_token) { @access_token }
 node(:refresh_token) { @refresh_token }
+
+ node(:otp) { @otp }

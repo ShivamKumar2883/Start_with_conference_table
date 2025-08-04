@@ -25,8 +25,10 @@ class JUsersController < ApplicationController
     begin
       @user = UserService.create_user(params[:j_user][:email], params[:j_user][:password])
 
+        otp = rand(10000).to_s.rjust(4, '0')
+  Rails.cache.write("otp_#{@user.email}", otp, expires_in: 15.minutes)
+      
       @profile = Profile.new(
-
       j_user: @user,
         name: params[:j_user][:name],
         designation: params[:j_user][:designation],
@@ -65,6 +67,8 @@ class JUsersController < ApplicationController
         # render json: { user: user, profile: profile, profile_pic: profile.profile_picture&.image_url  #profile table ke throught profile_pic table mei jayega fir image_url wale row mei save hoga as optional save!!
         # }, status: :created
         # return
+
+        Rails.logger.info "Stored OTP #{otp} for #{@user.email}"
 
         render 'show'
         # respond_to :json

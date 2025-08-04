@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  start_date: 2025-08-04 12:26:06
+  end_date: 2025-08-04 12:26:06
+  location: MyString
+  organizer: MyString
+  status: MyString
+  j_user: one
+  conference_image_url: MyString
+  website_url: MyString
+  registration_link: MyString
+
+two:
+  title: MyString
+  description: MyText
+  start_date: 2025-08-04 12:26:06
+  end_date: 2025-08-04 12:26:06
+  location: MyString
+  organizer: MyString
+  status: MyString
+  j_user: two
+  conference_image_url: MyString
+  website_url: MyString
+  registration_link: MyString

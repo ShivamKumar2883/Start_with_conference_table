@@ -10,7 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_30_110636) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_04_070742) do
+  create_table "conferences", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "theme"
+    t.datetime "start_date", null: false
+    t.datetime "end_date", null: false
+    t.string "image"
+    t.string "status", default: "upcoming", null: false
+    t.string "event_url"
+    t.bigint "j_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["end_date"], name: "index_conferences_on_end_date"
+    t.index ["j_user_id"], name: "index_conferences_on_j_user_id"
+    t.index ["start_date"], name: "index_conferences_on_start_date"
+    t.index ["status"], name: "index_conferences_on_status"
+    t.index ["title"], name: "index_conferences_on_title"
+  end
+
   create_table "delayed_jobs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
     t.integer "attempts", default: 0, null: false
@@ -65,6 +84,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_30_110636) do
     t.index ["j_user_id"], name: "index_profiles_on_j_user_id"
   end
 
+  add_foreign_key "conferences", "j_users"
   add_foreign_key "posts", "j_users"
   add_foreign_key "profile_pictures", "profiles"
   add_foreign_key "profiles", "j_users"

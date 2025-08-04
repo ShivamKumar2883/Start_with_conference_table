@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h1>Welcome to Our App, <%= @user.email %>!</h1>
+  <p>
+    Your account has been successfully created.
+  </p>
+  <p>
+    You can login to your account here: <%= link_to @login_url, @login_url %>
+  </p>
+  <p>Thanks for joining and have a great day!</p>
+</body>
+</html>
